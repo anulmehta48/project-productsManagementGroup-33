@@ -31,8 +31,7 @@ let uploadFile = async (file) => {
             // console.log(data.Location)
             return resolve(data.Location)
         })
-
-
+        
     })
 }
 

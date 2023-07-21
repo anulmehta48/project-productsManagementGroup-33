@@ -6,9 +6,7 @@ const {
   isValid,
   isValidRequestBody,
   isValidObjectId,
-  nameFormet,
-  validSize
-
+  nameFormet
 } = require("../validators/validation")
 
 
@@ -16,7 +14,6 @@ const {
 
 const createProduct = async (req, res) => {
   try {
-
     let data = req.body;
     let files = req.files;
 
@@ -47,7 +44,7 @@ const createProduct = async (req, res) => {
 
 
 
-    if (currencyId && currencyId !== "INR")
+    if ( currencyId && currencyId !== "INR")
       return res.status(400).send({ status: false, message: "enter INR currency only" });
 
     if (currencyFormat && currencyFormat !== "₹")
@@ -67,7 +64,7 @@ const createProduct = async (req, res) => {
       }
       data.availableSizes = size
     }
-    // if (!validSize(availableSizes)) return res.status(400).send({ status: false, message: "size contain only ( S, XS, M, X, L, XXL, XL ) " })
+    
 
     if (installments)
       if (isNaN(installments)) return res.status(400).send({ status: false, message: "installments should be number only" })
@@ -77,16 +74,15 @@ const createProduct = async (req, res) => {
 
     if (files && files.length > 0) {
       let uploadedFileURL = await uploadFile(files[0])
-
+  console.log(files)
       data['productImage'] = uploadedFileURL
+      
 
     }
 
 
     let createdproduct = await productModel.create(data)
     return res.status(201).send({ status: true, message: "Success", data: createdproduct })
-
-
   } catch (error) {
     res.status(500).send({ status: false, message: error.message });
   }
@@ -103,7 +99,7 @@ let productDetail = async function (req, res) {
 
 
     let { Size, name, price, priceSort, ...rest } = data
-    if (Object.keys(rest).length > 0) return res.status(400).send({ ststus: false, message: "try (name, size and price,priceSort) to get product detail" })
+    if (Object.keys(rest).length > 0) return res.status(400).send({ status: false, message: "try (name, size and price,priceSort) to get product detail" })
 
     if (Size) {
       Size = Size.trim()
@@ -111,16 +107,14 @@ let productDetail = async function (req, res) {
       for (let i = 0; i < size1.length; i++) {
         if (!Size.includes(size1[i])) return res.status(400).send({ status: false, message: "please use correct Size" })
       }
-      // if (!isValid(Size)) return res.status(400).send({ status: false, message: "please use size" })
-      // if (!validSize(Size)) return res.status(400).send({ status: false, message: "size contain only ( S, XS, M, X, L, XXL, XL ) " })
+      
       fdata["availableSizes"] = { $in: size1 }
     }
 
     if (name) {
       name = name.trim()
       if (!isValid(name)) return res.status(400).send({ status: false, message: "use correct formet " })
-      // let findData= await productModel.find()
-      // if(findData.title.includes(name)==true) 
+      
       let regex = new RegExp(name, "i")
       fdata["title"] = { $regex: regex }
     }
@@ -129,7 +123,8 @@ let productDetail = async function (req, res) {
     if (price) {
       let check = JSON.parse(price)
       console.log(check)
-      if (Object.keys(check).length == 0) return res.status(400).send({ status: false, message: 'plz enter price fliter..' })
+      if (Object.keys(check).length == 0) 
+      return res.status(400).send({ status: false, message: 'plz enter price fliter..' })
 
       if (check.priceGreaterThan) {
         fdata['price'] = { $gt: check.priceGreaterThan }
@@ -149,7 +144,8 @@ let productDetail = async function (req, res) {
     let sort = {}
 
     if (priceSort) {
-      if (!(priceSort == 1 || priceSort == -1)) return res.status(400).send({ status: false, message: 'plz give correct value for sotring ex=>  for:- ascending:1 & descending :-1' })
+      if (!(priceSort == 1 || priceSort == -1)) 
+      return res.status(400).send({ status: false, message: 'plz give correct value for sotring ex=>  for:- ascending:1 & descending :-1' })
       sort['price'] = priceSort
     }
 
@@ -232,9 +228,7 @@ const updateProduct = async function (req, res) {
         if (!(["S", "XS", "M", "X", "L", "XXL", "XL"].includes(size[i]))) return res.status(400).send({ status: false, message: `availableSizes should have only these Sizes ['S' || 'XS'  || 'M' || 'X' || 'L' || 'XXL' || 'XL']` })
 
       }
-      // if(!validSize(availableSizes)) 
-      // data['$addToSet'] = {}
-      // data['$addToSet']['availableSizes'] = size
+      
       data['availableSizes'] = size
 
     }

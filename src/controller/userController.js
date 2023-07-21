@@ -108,7 +108,7 @@ const createUser = async function (req, res) {
                 return res.status(400).send({ status: false, message: "PIN code should contain 6 digits only " })
         }
 
-        if (files.length == 0) return res.status(404).send({status:false, message:""})
+        if (files.length == 0) return res.status(404).send({status:false, message:"please provide profileimage"})
         if (files.length > 0) {
             if (files && files.length > 0) {
                 //upload to s3 and get the uploaded link
@@ -209,8 +209,8 @@ const updateUser = async function (req, res) {
 
         let { fname, lname, email, password, phone, address, profileImage } = req.body;
         let data = {}
-        // if(!fname || !lname || !email || !password || !phone  || !profileImage) 
-        // return res.status(404).send({ message: 'please provide required fied' }) 
+        
+   
 
 
         if (!isValidRequestBody(req.body))
@@ -270,9 +270,7 @@ const updateUser = async function (req, res) {
             if (checkPhone) return res.status(409).send({ status: false, msg: "Phone already exist" })
             data.phone = phone
         }
-        //===========================================ADDRESS==============================================
-        //if (!address) return res.status(400).send({ status: false, msg: "address requried" })
-        //var address1 = JSON.parse(address)
+ 
 
         //=============ADDRESS-SHIPPING==================
         if (address) {
@@ -309,7 +307,7 @@ const updateUser = async function (req, res) {
                 if (!isValidPincode(data.address.billing.pincode))
                     return res.status(400).send({ status: false, message: "PIN code should contain 6 digits only " })
                 data.address.billing.pincode = address.billing.pincode
-            } ad
+            } 
         }
 
         let file = req.files
@@ -326,7 +324,7 @@ const updateUser = async function (req, res) {
             const hash = await bcrypt.hash(password, saltRounds)
             data.password = hash
         }
-        //data.address = address
+        
         let updatedUser = await userModel.findOneAndUpdate({
             _id: userId
         }, {
